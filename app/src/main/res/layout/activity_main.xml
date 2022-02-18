@@ -12,6 +12,12 @@
         android:layout_height="wrap_content"
         android:text="@string/send_request" />
 
+    <Button
+        android:id="@+id/getAppDataBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/get_app_data" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -21,5 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </ScrollView>
+
+
 
 </LinearLayout>

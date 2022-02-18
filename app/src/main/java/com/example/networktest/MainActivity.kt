@@ -13,6 +13,11 @@ import org.json.JSONArray
 import org.xml.sax.InputSource
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.StringReader
@@ -33,9 +38,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.sendRequestBtn.setOnClickListener {
-            //sendRequestWithHttpURLConnection()
-            sendRequestWithOkHttp()
+//        binding.sendRequestBtn.setOnClickListener {
+//            //sendRequestWithHttpURLConnection()
+//            sendRequestWithOkHttp()
+//        }
+
+        binding.getAppDataBtn.setOnClickListener {
+            val retrofit = Retrofit.Builder()
+                .baseUrl("http://192.168.137.1:8080")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val appService = retrofit.create(AppService::class.java)
+            appService.getAppData().enqueue(object : Callback<List<App>> {
+                override fun onResponse(call: Call<List<App>>, response: Response<List<App>>) {
+                    val list = response.body()
+                    if (list != null) {
+                        for (app in list) {
+                            Log.d(tag, "id is ${app.id}")
+                            Log.d(tag, "name is ${app.name}")
+                            Log.d(tag, "version is ${app.version}")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<List<App>>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
         }
 
     }
@@ -66,29 +95,29 @@ class MainActivity : AppCompatActivity() {
 //        }
 //    }
 
-    //使用OkHttp
-    private fun sendRequestWithOkHttp() {
-        thread {
-            try {
-                val client = OkHttpClient()
-                val request = Request.Builder()
-                        //.url("https://www.bing.com")
-                        //.url("http://192.168.137.1:8080/get_data.xml")
-                        .url("http://192.168.137.1:8080/get_data.json")
-                        .build()
-                val response = client.newCall(request).execute()
-                val responseData = response.body?.string()
-                if (responseData != null) {
-                    //parseXMLWithPull(responseData)
-                    //parseXMLWithSAX(responseData)
-                    //parseJSONWithJSONObject(responseData)
-                    parseJSONWithGSON(responseData)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+//    //使用OkHttp
+//    private fun sendRequestWithOkHttp() {
+//        thread {
+//            try {
+//                val client = OkHttpClient()
+//                val request = Request.Builder()
+//                        //.url("https://www.bing.com")
+//                        //.url("http://192.168.137.1:8080/get_data.xml")
+//                        .url("http://192.168.137.1:8080/get_data.json")
+//                        .build()
+//                val response = client.newCall(request).execute()
+//                val responseData = response.body?.string()
+//                if (responseData != null) {
+//                    //parseXMLWithPull(responseData)
+//                    //parseXMLWithSAX(responseData)
+//                    //parseJSONWithJSONObject(responseData)
+//                    parseJSONWithGSON(responseData)
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 
 //    private fun showResponse(response: String) {
 //        runOnUiThread {
@@ -164,17 +193,17 @@ class MainActivity : AppCompatActivity() {
 //        }
 //    }
 
-    //JSON：GSON解析方式
-    private fun parseJSONWithGSON(jsonData: String) {
-        val gson = Gson()
-        val typeOf = object : TypeToken<List<App>>() {}.type
-        val appList = gson.fromJson<List<App>>(jsonData, typeOf)
-        for (app in appList) {
-            Log.d(tag, "id is ${app.id}")
-            Log.d(tag, "name is ${app.name}")
-            Log.d(tag, "version is ${app.version}")
-        }
-    }
+//    //JSON：GSON解析方式
+//    private fun parseJSONWithGSON(jsonData: String) {
+//        val gson = Gson()
+//        val typeOf = object : TypeToken<List<App>>() {}.type
+//        val appList = gson.fromJson<List<App>>(jsonData, typeOf)
+//        for (app in appList) {
+//            Log.d(tag, "id is ${app.id}")
+//            Log.d(tag, "name is ${app.name}")
+//            Log.d(tag, "version is ${app.version}")
+//        }
+//    }
 
 
 }

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NetworkTest</string>
     <string name="send_request">Send Request</string>
+    <string name="get_app_data">Get App Data</string>
 </resources>

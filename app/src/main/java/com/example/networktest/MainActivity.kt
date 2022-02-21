@@ -44,11 +44,14 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         binding.getAppDataBtn.setOnClickListener {
-            val retrofit = Retrofit.Builder()
-                .baseUrl("http://192.168.137.1:8080")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-            val appService = retrofit.create(AppService::class.java)
+//            val retrofit = Retrofit.Builder()
+//                .baseUrl("http://192.168.137.1:8080")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build()
+//            //获取AppService的动态代理对象
+//            val appService = retrofit.create(AppService::class.java)
+            //封装成ServiceCreator类
+            val appService = ServiceCreator.create(AppService::class.java)
             appService.getAppData().enqueue(object : Callback<List<App>> {
                 override fun onResponse(call: Call<List<App>>, response: Response<List<App>>) {
                     val list = response.body()
